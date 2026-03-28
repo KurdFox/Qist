@@ -1,0 +1,89 @@
+{
+  "entities": {
+    "Customer": {
+      "title": "Customer",
+      "description": "Information about a customer",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "phone": { "type": "string" },
+        "address": { "type": "string" },
+        "idNumber": { "type": "string" },
+        "emoji": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "createdBy": { "type": "string" }
+      },
+      "required": ["name", "phone", "createdBy"]
+    },
+    "Loan": {
+      "title": "Loan",
+      "description": "Information about a loan given to a customer",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "customerId": { "type": "string" },
+        "itemName": { "type": "string" },
+        "totalAmount": { "type": "number" },
+        "downPayment": { "type": "number" },
+        "remainingAmount": { "type": "number" },
+        "monthsCount": { "type": "integer" },
+        "monthlyInstallment": { "type": "number" },
+        "startDate": { "type": "string", "format": "date" },
+        "status": { "type": "string", "enum": ["active", "completed"] },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "createdBy": { "type": "string" }
+      },
+      "required": ["customerId", "itemName", "totalAmount", "monthsCount", "createdBy"]
+    },
+    "Installment": {
+      "title": "Installment",
+      "description": "A single monthly payment record",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "loanId": { "type": "string" },
+        "customerId": { "type": "string" },
+        "amount": { "type": "number" },
+        "dueDate": { "type": "string", "format": "date" },
+        "status": { "type": "string", "enum": ["pending", "paid"] },
+        "paidAt": { "type": "string", "format": "date-time" },
+        "createdBy": { "type": "string" }
+      },
+      "required": ["loanId", "customerId", "amount", "dueDate", "status", "createdBy"]
+    },
+    "User": {
+      "title": "User",
+      "description": "Information about an authenticated user (admin/shop owner)",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string" },
+        "email": { "type": "string" },
+        "displayName": { "type": "string" },
+        "photoURL": { "type": "string" },
+        "role": { "type": "string", "enum": ["admin", "user"] },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "lastLogin": { "type": "string", "format": "date-time" }
+      },
+      "required": ["uid", "email", "role"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": "User",
+      "description": "Collection of authenticated users"
+    },
+    "/customers/{customerId}": {
+      "schema": "Customer",
+      "description": "Collection of customers"
+    },
+    "/loans/{loanId}": {
+      "schema": "Loan",
+      "description": "Collection of loans"
+    },
+    "/installments/{installmentId}": {
+      "schema": "Installment",
+      "description": "Collection of installments"
+    }
+  }
+}

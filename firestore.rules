@@ -1,0 +1,111 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // ===============================================================
+    // Assumed Data Model
+    // ===============================================================
+    //
+    // Collection: customers
+    // Fields: name, phone, address, idNumber, emoji, createdAt, createdBy
+    //
+    // Collection: loans
+    // Fields: customerId, itemName, totalAmount, downPayment, remainingAmount, monthsCount, monthlyInstallment, startDate, status, createdAt, createdBy
+    //
+    // Collection: installments
+    // Fields: loanId, customerId, amount, dueDate, status, paidAt, createdBy
+    //
+    // Collection: users
+    // Fields: uid, email, displayName, photoURL, role, createdAt, lastLogin
+    //
+    // ===============================================================
+
+    // Helper Functions
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isOwner(uid) {
+      return isAuthenticated() && request.auth.uid == uid;
+    }
+
+    function isDocCreator(data) {
+      return isAuthenticated() && request.auth.uid == data.createdBy;
+    }
+
+    function isAdmin() {
+      return isAuthenticated() && (
+        (get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin') ||
+        (request.auth.token.email == "hosheytech@gmail.com" && request.auth.token.email_verified == true)
+      );
+    }
+
+    // Domain Validators
+    function isValidUser(data) {
+      return data.keys().hasAll(['uid', 'email', 'role']) &&
+             data.uid == request.auth.uid &&
+             data.email is string &&
+             data.role in ['admin', 'user'] &&
+             // Prevent non-admins from making themselves admins
+             (data.role == 'user' || isAdmin());
+    }
+    function isValidCustomer(data) {
+      return data.keys().hasAll(['name', 'phone', 'createdBy']) &&
+             data.name is string && data.name.size() > 0 && data.name.size() < 100 &&
+             data.phone is string && data.phone.size() > 0 && data.phone.size() < 20 &&
+             (!('emoji' in data) || (data.emoji is string && data.emoji.size() < 10)) &&
+             data.createdBy == request.auth.uid;
+    }
+
+    function isValidLoan(data) {
+      return data.keys().hasAll(['customerId', 'itemName', 'totalAmount', 'monthsCount', 'createdBy']) &&
+             data.customerId is string &&
+             data.itemName is string && data.itemName.size() > 0 &&
+             data.totalAmount is number && data.totalAmount >= 0 &&
+             data.monthsCount is number && data.monthsCount > 0 &&
+             data.createdBy == request.auth.uid;
+    }
+
+    function isValidInstallment(data) {
+      return data.keys().hasAll(['loanId', 'customerId', 'amount', 'dueDate', 'status', 'createdBy']) &&
+             data.loanId is string &&
+             data.customerId is string &&
+             data.amount is number && data.amount >= 0 &&
+             data.dueDate is string &&
+             data.status in ['pending', 'paid'] &&
+             data.createdBy == request.auth.uid;
+    }
+
+    // Rules
+    match /customers/{customerId} {
+      allow read: if isAuthenticated();
+      allow create: if isAuthenticated() && isValidCustomer(request.resource.data);
+      allow update: if isAuthenticated() && isDocCreator(resource.data) && isValidCustomer(request.resource.data);
+      allow delete: if isAuthenticated() && (isDocCreator(resource.data) || isAdmin());
+    }
+
+    match /loans/{loanId} {
+      allow read: if isAuthenticated();
+      allow create: if isAuthenticated() && isValidLoan(request.resource.data);
+      allow update: if isAuthenticated() && isDocCreator(resource.data) && isValidLoan(request.resource.data);
+      allow delete: if isAuthenticated() && (isDocCreator(resource.data) || isAdmin());
+    }
+
+    match /installments/{installmentId} {
+      allow read: if isAuthenticated();
+      allow create: if isAuthenticated() && isValidInstallment(request.resource.data);
+      allow update: if isAuthenticated() && isDocCreator(resource.data) && isValidInstallment(request.resource.data);
+      allow delete: if isAuthenticated() && (isDocCreator(resource.data) || isAdmin());
+    }
+
+    match /users/{userId} {
+      allow read: if isAuthenticated();
+      allow create: if isAuthenticated() && isOwner(userId) && isValidUser(request.resource.data);
+      allow update: if isAuthenticated() && (isOwner(userId) || isAdmin()) && isValidUser(request.resource.data);
+      allow delete: if isAdmin();
+    }
+
+    match /test/connection {
+      allow read: if true;
+    }
+  }
+}
