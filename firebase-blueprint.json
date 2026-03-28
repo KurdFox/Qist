@@ -30,6 +30,7 @@
         "monthsCount": { "type": "integer" },
         "monthlyInstallment": { "type": "number" },
         "startDate": { "type": "string", "format": "date" },
+        "currency": { "type": "string", "enum": ["IQD", "USD"] },
         "status": { "type": "string", "enum": ["active", "completed"] },
         "createdAt": { "type": "string", "format": "date-time" },
         "createdBy": { "type": "string" }
@@ -45,6 +46,7 @@
         "loanId": { "type": "string" },
         "customerId": { "type": "string" },
         "amount": { "type": "number" },
+        "currency": { "type": "string", "enum": ["IQD", "USD"] },
         "dueDate": { "type": "string", "format": "date" },
         "status": { "type": "string", "enum": ["pending", "paid"] },
         "paidAt": { "type": "string", "format": "date-time" },

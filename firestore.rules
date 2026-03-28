@@ -9,10 +9,10 @@ service cloud.firestore {
     // Fields: name, phone, address, idNumber, emoji, createdAt, createdBy
     //
     // Collection: loans
-    // Fields: customerId, itemName, totalAmount, downPayment, remainingAmount, monthsCount, monthlyInstallment, startDate, status, createdAt, createdBy
+    // Fields: customerId, itemName, totalAmount, downPayment, remainingAmount, monthsCount, monthlyInstallment, startDate, currency, status, createdAt, createdBy
     //
     // Collection: installments
-    // Fields: loanId, customerId, amount, dueDate, status, paidAt, createdBy
+    // Fields: loanId, customerId, amount, currency, dueDate, status, paidAt, createdBy
     //
     // Collection: users
     // Fields: uid, email, displayName, photoURL, role, createdAt, lastLogin
@@ -62,6 +62,7 @@ service cloud.firestore {
              data.itemName is string && data.itemName.size() > 0 &&
              data.totalAmount is number && data.totalAmount >= 0 &&
              data.monthsCount is number && data.monthsCount > 0 &&
+             (!('currency' in data) || (data.currency in ['IQD', 'USD'])) &&
              data.createdBy == request.auth.uid;
     }
 
@@ -72,6 +73,7 @@ service cloud.firestore {
              data.amount is number && data.amount >= 0 &&
              data.dueDate is string &&
              data.status in ['pending', 'paid'] &&
+             (!('currency' in data) || (data.currency in ['IQD', 'USD'])) &&
              data.createdBy == request.auth.uid;
     }
 

@@ -6,6 +6,8 @@
   --font-display: "Zain", sans-serif;
 }
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 body {
   direction: rtl;
   font-family: var(--font-sans);

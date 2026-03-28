@@ -14,6 +14,8 @@ import Login from './components/Login';
 import ErrorBoundary from './components/ErrorBoundary';
 import { Loader2 } from 'lucide-react';
 
+import { ThemeProvider } from './contexts/ThemeContext';
+
 export default function App() {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
@@ -52,10 +54,10 @@ export default function App() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+      <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-950">
         <div className="flex flex-col items-center gap-4">
           <Loader2 className="animate-spin text-blue-600" size={48} />
-          <p className="text-gray-500 font-bold animate-pulse">کەمێک چاوەڕوانبە...</p>
+          <p className="text-gray-500 dark:text-gray-400 font-bold animate-pulse">کەمێک چاوەڕوانبە...</p>
         </div>
       </div>
     );
@@ -63,19 +65,21 @@ export default function App() {
 
   return (
     <ErrorBoundary>
-      <BrowserRouter>
-        <Routes>
-          <Route path="/login" element={!user ? <Login /> : <Navigate to="/" />} />
-          <Route path="/" element={user ? <Layout /> : <Navigate to="/login" />}>
-            <Route index element={<Dashboard />} />
-            <Route path="customers" element={<CustomerManagement />} />
-            <Route path="loans" element={<LoanManagement />} />
-            <Route path="installments" element={<InstallmentTracking />} />
-            <Route path="activities" element={<Activities />} />
-            <Route path="reports" element={<Reports />} />
-          </Route>
-        </Routes>
-      </BrowserRouter>
+      <ThemeProvider>
+        <BrowserRouter>
+          <Routes>
+            <Route path="/login" element={!user ? <Login /> : <Navigate to="/" />} />
+            <Route path="/" element={user ? <Layout /> : <Navigate to="/login" />}>
+              <Route index element={<Dashboard />} />
+              <Route path="customers" element={<CustomerManagement />} />
+              <Route path="loans" element={<LoanManagement />} />
+              <Route path="installments" element={<InstallmentTracking />} />
+              <Route path="activities" element={<Activities />} />
+              <Route path="reports" element={<Reports />} />
+            </Route>
+          </Routes>
+        </BrowserRouter>
+      </ThemeProvider>
     </ErrorBoundary>
   );
 }

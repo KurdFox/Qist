@@ -23,7 +23,8 @@ export default function LoanManagement() {
     totalAmount: 0,
     downPayment: 0,
     monthsCount: 12,
-    startDate: format(new Date(), 'yyyy-MM-dd')
+    startDate: format(new Date(), 'yyyy-MM-dd'),
+    currency: 'IQD' as 'IQD' | 'USD'
   });
 
   useEffect(() => {
@@ -53,7 +54,8 @@ export default function LoanManagement() {
       totalAmount: 0,
       downPayment: 0,
       monthsCount: 12,
-      startDate: format(new Date(), 'yyyy-MM-dd')
+      startDate: format(new Date(), 'yyyy-MM-dd'),
+      currency: 'IQD'
     });
     setIsModalOpen(true);
   };
@@ -66,7 +68,8 @@ export default function LoanManagement() {
       totalAmount: loan.totalAmount,
       downPayment: loan.downPayment,
       monthsCount: loan.monthsCount,
-      startDate: loan.startDate
+      startDate: loan.startDate,
+      currency: loan.currency || 'IQD'
     });
     setIsModalOpen(true);
   };
@@ -110,6 +113,7 @@ export default function LoanManagement() {
             loanId: editingLoan.id,
             customerId: formData.customerId,
             amount: monthlyInstallment,
+            currency: formData.currency,
             dueDate,
             status: 'pending',
             createdBy: auth.currentUser.uid
@@ -128,6 +132,7 @@ export default function LoanManagement() {
             loanId: loanRef.id,
             customerId: formData.customerId,
             amount: monthlyInstallment,
+            currency: formData.currency,
             dueDate,
             status: 'pending',
             createdBy: auth.currentUser.uid
@@ -143,7 +148,8 @@ export default function LoanManagement() {
         totalAmount: 0,
         downPayment: 0,
         monthsCount: 12,
-        startDate: format(new Date(), 'yyyy-MM-dd')
+        startDate: format(new Date(), 'yyyy-MM-dd'),
+        currency: 'IQD'
       });
     } catch (err) {
       handleFirestoreError(err, editingLoan ? OperationType.UPDATE : OperationType.CREATE, 'loans');
@@ -188,12 +194,12 @@ export default function LoanManagement() {
     <div className="space-y-8">
       <header className="flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div>
-          <h1 className="text-3xl font-extrabold text-gray-900 tracking-tight mb-2">بەڕێوەبردنی قەرزەکان</h1>
-          <p className="text-gray-500 font-medium">تۆمارکردنی قەرزی نوێ و بینینی خشتەی قیستەکان</p>
+          <h1 className="text-3xl font-extrabold text-gray-900 dark:text-white tracking-tight mb-2 font-display">بەڕێوەبردنی قەرزەکان</h1>
+          <p className="text-gray-500 dark:text-gray-400 font-medium">تۆمارکردنی قەرزی نوێ و بینینی خشتەی قیستەکان</p>
         </div>
         <button
           onClick={openAddModal}
-          className="inline-flex items-center justify-center gap-3 px-8 py-4 bg-blue-600 text-white rounded-2xl font-bold hover:bg-blue-700 transition-all shadow-lg shadow-blue-200"
+          className="inline-flex items-center justify-center gap-3 px-8 py-4 bg-blue-600 text-white rounded-2xl font-bold hover:bg-blue-700 transition-all shadow-lg dark:shadow-none"
         >
           <Plus size={20} />
           تۆمارکردنی قەرز
@@ -207,54 +213,58 @@ export default function LoanManagement() {
           placeholder="گەڕان بەدوای ناوی کڕیار یان جۆری کاڵا..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="w-full pr-14 pl-6 py-5 bg-white border border-gray-100 rounded-3xl shadow-sm focus:ring-4 focus:ring-blue-50 focus:border-blue-200 outline-none transition-all font-medium"
+          className="w-full pr-14 pl-6 py-5 bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 rounded-3xl shadow-sm focus:ring-4 focus:ring-blue-50 dark:focus:ring-blue-900/20 focus:border-blue-200 dark:focus:border-blue-800 outline-none transition-all font-medium text-gray-900 dark:text-white"
         />
       </div>
 
-      <div className="bg-white rounded-[2rem] border border-gray-100 shadow-sm overflow-hidden">
+      <div className="bg-white dark:bg-gray-900 rounded-[2rem] border border-gray-100 dark:border-gray-800 shadow-sm overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-right">
             <thead>
-              <tr className="bg-gray-50/50 border-b border-gray-100">
-                <th className="px-8 py-6 text-sm font-bold text-gray-400 uppercase tracking-widest">کڕیار</th>
-                <th className="px-8 py-6 text-sm font-bold text-gray-400 uppercase tracking-widest">کاڵا</th>
-                <th className="px-8 py-6 text-sm font-bold text-gray-400 uppercase tracking-widest">کۆی گشتی</th>
-                <th className="px-8 py-6 text-sm font-bold text-gray-400 uppercase tracking-widest">ماوە</th>
-                <th className="px-8 py-6 text-sm font-bold text-gray-400 uppercase tracking-widest">مانگ</th>
-                <th className="px-8 py-6 text-sm font-bold text-gray-400 uppercase tracking-widest">دۆخ</th>
-                <th className="px-8 py-6 text-sm font-bold text-gray-400 uppercase tracking-widest">کردارەکان</th>
+              <tr className="bg-gray-50/50 dark:bg-gray-800/50 border-b border-gray-100 dark:border-gray-800">
+                <th className="px-8 py-6 text-sm font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest">کڕیار</th>
+                <th className="px-8 py-6 text-sm font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest">کاڵا</th>
+                <th className="px-8 py-6 text-sm font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest">کۆی گشتی</th>
+                <th className="px-8 py-6 text-sm font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest">ماوە</th>
+                <th className="px-8 py-6 text-sm font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest">مانگ</th>
+                <th className="px-8 py-6 text-sm font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest">دۆخ</th>
+                <th className="px-8 py-6 text-sm font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest">کردارەکان</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-50">
+            <tbody className="divide-y divide-gray-50 dark:divide-gray-800">
               {filteredLoans.map((loan) => {
                 const customer = getCustomer(loan.customerId);
                 return (
-                  <tr key={loan.id} className="hover:bg-gray-50/50 transition-colors group">
+                  <tr key={loan.id} className="hover:bg-gray-50/50 dark:hover:bg-gray-800/50 transition-colors group">
                     <td className="px-8 py-6">
                       <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center text-xl shadow-inner">
+                        <div className="w-10 h-10 rounded-xl bg-blue-50 dark:bg-blue-900/20 flex items-center justify-center text-xl shadow-inner">
                           {customer?.emoji || customer?.name?.charAt(0) || '?'}
                         </div>
-                        <span className="font-bold text-gray-900">{customer?.name || 'کڕیاری نەناسراو'}</span>
+                        <span className="font-bold text-gray-900 dark:text-white">{customer?.name || 'کڕیاری نەناسراو'}</span>
                       </div>
                     </td>
-                    <td className="px-8 py-6 font-medium text-gray-600">{loan.itemName}</td>
-                    <td className="px-8 py-6 font-black text-gray-900">{loan.totalAmount.toLocaleString()}</td>
-                    <td className="px-8 py-6 font-black text-orange-600">{loan.remainingAmount.toLocaleString()}</td>
-                    <td className="px-8 py-6 font-bold text-gray-500">{loan.monthsCount} مانگ</td>
+                    <td className="px-8 py-6 font-medium text-gray-600 dark:text-gray-400">{loan.itemName}</td>
+                    <td className="px-8 py-6 font-black text-gray-900 dark:text-white">
+                      {loan.totalAmount.toLocaleString()} {loan.currency === 'USD' ? '$' : 'د.ع'}
+                    </td>
+                    <td className="px-8 py-6 font-black text-orange-600 dark:text-orange-400">
+                      {loan.remainingAmount.toLocaleString()} {loan.currency === 'USD' ? '$' : 'د.ع'}
+                    </td>
+                    <td className="px-8 py-6 font-bold text-gray-500 dark:text-gray-400">{loan.monthsCount} مانگ</td>
                     <td className="px-8 py-6">
                       <span className={cn(
                         "px-4 py-1.5 rounded-full text-xs font-bold",
-                        loan.status === 'active' ? "bg-green-50 text-green-600" : "bg-gray-100 text-gray-500"
+                        loan.status === 'active' ? "bg-green-50 dark:bg-green-900/20 text-green-600 dark:text-green-400" : "bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400"
                       )}>
                         {loan.status === 'active' ? 'چالاک' : 'تەواوبوو'}
                       </span>
                     </td>
                     <td className="px-8 py-6">
-                      <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                      <div className="flex items-center gap-2 transition-opacity">
                         <button 
                           onClick={() => openEditModal(loan)}
-                          className="p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition-all"
+                          className="p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-xl transition-all"
                         >
                           <Edit2 size={18} />
                         </button>
@@ -263,7 +273,7 @@ export default function LoanManagement() {
                             setLoanToDelete(loan);
                             setIsDeleteModalOpen(true);
                           }}
-                          className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-xl transition-all"
+                          className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-xl transition-all"
                         >
                           <Trash2 size={18} />
                         </button>
@@ -292,19 +302,19 @@ export default function LoanManagement() {
               initial={{ opacity: 0, scale: 0.9, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.9, y: 20 }}
-              className="relative w-full max-w-2xl bg-white rounded-[2rem] shadow-2xl p-8 md:p-10 max-h-[90vh] overflow-y-auto"
+              className="relative w-full max-w-2xl bg-white dark:bg-gray-900 rounded-[2rem] shadow-2xl p-8 md:p-10 max-h-[90vh] overflow-y-auto"
             >
               <div className="flex items-center justify-between mb-8">
-                <h2 className="text-2xl font-bold text-gray-900">
+                <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
                   {editingLoan ? 'دەستکاری قەرز' : 'تۆمارکردنی قەرزی نوێ'}
                 </h2>
-                <button onClick={() => setIsModalOpen(false)} className="p-2 text-gray-400 hover:bg-gray-50 rounded-xl transition-colors">
+                <button onClick={() => setIsModalOpen(false)} className="p-2 text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 rounded-xl transition-colors">
                   <X size={24} />
                 </button>
               </div>
 
               {editingLoan && (
-                <div className="mb-6 p-4 bg-orange-50 border border-orange-100 rounded-2xl flex gap-3 text-orange-800 text-sm">
+                <div className="mb-6 p-4 bg-orange-50 dark:bg-orange-900/20 border border-orange-100 dark:border-orange-800 rounded-2xl flex gap-3 text-orange-800 dark:text-orange-400 text-sm">
                   <AlertTriangle size={20} className="shrink-0" />
                   <p className="font-medium">تێبینی: گۆڕینی بڕی پارە یان مانگەکان دەبێتە هۆی دووبارە دروستکردنەوەی هەموو قیستەکان بۆ ئەم قەرزە.</p>
                 </div>
@@ -313,21 +323,21 @@ export default function LoanManagement() {
               <form onSubmit={handleSubmit} className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="space-y-2">
-                    <label className="text-sm font-bold text-gray-700 mr-1 flex items-center gap-2">
+                    <label className="text-sm font-bold text-gray-700 dark:text-gray-300 mr-1 flex items-center gap-2">
                       <User size={16} className="text-blue-500" /> کڕیار
                     </label>
                     <select
                       required
                       value={formData.customerId}
                       onChange={(e) => setFormData({ ...formData, customerId: e.target.value })}
-                      className="w-full px-6 py-4 bg-gray-50 border border-gray-100 rounded-2xl focus:ring-4 focus:ring-blue-50 focus:border-blue-200 outline-none transition-all font-medium appearance-none"
+                      className="w-full px-6 py-4 bg-gray-50 dark:bg-gray-800 border border-gray-100 dark:border-gray-700 rounded-2xl focus:ring-4 focus:ring-blue-50 dark:focus:ring-blue-900/20 focus:border-blue-200 dark:focus:border-blue-600 outline-none transition-all font-medium appearance-none text-gray-900 dark:text-white"
                     >
                       <option value="">کڕیار هەڵبژێرە...</option>
                       {customers.map(c => <option key={c.id} value={c.id}>{c.emoji} {c.name}</option>)}
                     </select>
                   </div>
                   <div className="space-y-2">
-                    <label className="text-sm font-bold text-gray-700 mr-1 flex items-center gap-2">
+                    <label className="text-sm font-bold text-gray-700 dark:text-gray-300 mr-1 flex items-center gap-2">
                       <Package size={16} className="text-blue-500" /> ناوی کاڵا
                     </label>
                     <input
@@ -335,36 +345,50 @@ export default function LoanManagement() {
                       type="text"
                       value={formData.itemName}
                       onChange={(e) => setFormData({ ...formData, itemName: e.target.value })}
-                      className="w-full px-6 py-4 bg-gray-50 border border-gray-100 rounded-2xl focus:ring-4 focus:ring-blue-50 focus:border-blue-200 outline-none transition-all font-medium"
+                      className="w-full px-6 py-4 bg-gray-50 dark:bg-gray-800 border border-gray-100 dark:border-gray-700 rounded-2xl focus:ring-4 focus:ring-blue-50 dark:focus:ring-blue-900/20 focus:border-blue-200 dark:focus:border-blue-600 outline-none transition-all font-medium text-gray-900 dark:text-white"
                       placeholder="ناوی کاڵاکە بنووسە..."
                     />
                   </div>
                   <div className="space-y-2">
-                    <label className="text-sm font-bold text-gray-700 mr-1 flex items-center gap-2">
-                      <DollarSign size={16} className="text-blue-500" /> نرخی گشتی (دینار)
+                    <label className="text-sm font-bold text-gray-700 dark:text-gray-300 mr-1 flex items-center gap-2">
+                      <DollarSign size={16} className="text-blue-500" /> جۆری دراو
+                    </label>
+                    <select
+                      required
+                      value={formData.currency}
+                      onChange={(e) => setFormData({ ...formData, currency: e.target.value as 'IQD' | 'USD' })}
+                      className="w-full px-6 py-4 bg-gray-50 dark:bg-gray-800 border border-gray-100 dark:border-gray-700 rounded-2xl focus:ring-4 focus:ring-blue-50 dark:focus:ring-blue-900/20 focus:border-blue-200 dark:focus:border-blue-600 outline-none transition-all font-medium appearance-none text-gray-900 dark:text-white"
+                    >
+                      <option value="IQD">دیناری عێراقی (IQD)</option>
+                      <option value="USD">دۆلاری ئەمریکی (USD)</option>
+                    </select>
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-sm font-bold text-gray-700 dark:text-gray-300 mr-1 flex items-center gap-2">
+                      <DollarSign size={16} className="text-blue-500" /> نرخی گشتی
                     </label>
                     <input
                       required
                       type="number"
                       value={formData.totalAmount}
                       onChange={(e) => setFormData({ ...formData, totalAmount: Number(e.target.value) })}
-                      className="w-full px-6 py-4 bg-gray-50 border border-gray-100 rounded-2xl focus:ring-4 focus:ring-blue-50 focus:border-blue-200 outline-none transition-all font-medium"
+                      className="w-full px-6 py-4 bg-gray-50 dark:bg-gray-800 border border-gray-100 dark:border-gray-700 rounded-2xl focus:ring-4 focus:ring-blue-50 dark:focus:ring-blue-900/20 focus:border-blue-200 dark:focus:border-blue-600 outline-none transition-all font-medium text-gray-900 dark:text-white"
                     />
                   </div>
                   <div className="space-y-2">
-                    <label className="text-sm font-bold text-gray-700 mr-1 flex items-center gap-2">
-                      <DollarSign size={16} className="text-blue-500" /> بڕی پێشەکی (دینار)
+                    <label className="text-sm font-bold text-gray-700 dark:text-gray-300 mr-1 flex items-center gap-2">
+                      <DollarSign size={16} className="text-blue-500" /> بڕی پێشەکی
                     </label>
                     <input
                       required
                       type="number"
                       value={formData.downPayment}
                       onChange={(e) => setFormData({ ...formData, downPayment: Number(e.target.value) })}
-                      className="w-full px-6 py-4 bg-gray-50 border border-gray-100 rounded-2xl focus:ring-4 focus:ring-blue-50 focus:border-blue-200 outline-none transition-all font-medium"
+                      className="w-full px-6 py-4 bg-gray-50 dark:bg-gray-800 border border-gray-100 dark:border-gray-700 rounded-2xl focus:ring-4 focus:ring-blue-50 dark:focus:ring-blue-900/20 focus:border-blue-200 dark:focus:border-blue-600 outline-none transition-all font-medium text-gray-900 dark:text-white"
                     />
                   </div>
                   <div className="space-y-2">
-                    <label className="text-sm font-bold text-gray-700 mr-1 flex items-center gap-2">
+                    <label className="text-sm font-bold text-gray-700 dark:text-gray-300 mr-1 flex items-center gap-2">
                       <Calendar size={16} className="text-blue-500" /> ژمارەی مانگەکانی قیست
                     </label>
                     <input
@@ -372,11 +396,11 @@ export default function LoanManagement() {
                       type="number"
                       value={formData.monthsCount}
                       onChange={(e) => setFormData({ ...formData, monthsCount: Number(e.target.value) })}
-                      className="w-full px-6 py-4 bg-gray-50 border border-gray-100 rounded-2xl focus:ring-4 focus:ring-blue-50 focus:border-blue-200 outline-none transition-all font-medium"
+                      className="w-full px-6 py-4 bg-gray-50 dark:bg-gray-800 border border-gray-100 dark:border-gray-700 rounded-2xl focus:ring-4 focus:ring-blue-50 dark:focus:ring-blue-900/20 focus:border-blue-200 dark:focus:border-blue-600 outline-none transition-all font-medium text-gray-900 dark:text-white"
                     />
                   </div>
                   <div className="space-y-2">
-                    <label className="text-sm font-bold text-gray-700 mr-1 flex items-center gap-2">
+                    <label className="text-sm font-bold text-gray-700 dark:text-gray-300 mr-1 flex items-center gap-2">
                       <Calendar size={16} className="text-blue-500" /> بەرواری دەستپێکردن
                     </label>
                     <input
@@ -384,18 +408,18 @@ export default function LoanManagement() {
                       type="date"
                       value={formData.startDate}
                       onChange={(e) => setFormData({ ...formData, startDate: e.target.value })}
-                      className="w-full px-6 py-4 bg-gray-50 border border-gray-100 rounded-2xl focus:ring-4 focus:ring-blue-50 focus:border-blue-200 outline-none transition-all font-medium"
+                      className="w-full px-6 py-4 bg-gray-50 dark:bg-gray-800 border border-gray-100 dark:border-gray-700 rounded-2xl focus:ring-4 focus:ring-blue-50 dark:focus:ring-blue-900/20 focus:border-blue-200 dark:focus:border-blue-600 outline-none transition-all font-medium text-gray-900 dark:text-white"
                     />
                   </div>
                 </div>
 
-                <div className="p-6 bg-blue-50 rounded-2xl border border-blue-100">
+                <div className="p-6 bg-blue-50 dark:bg-blue-900/20 rounded-2xl border border-blue-100 dark:border-blue-800">
                   <div className="flex justify-between items-center">
-                    <span className="text-sm font-bold text-blue-900">قیستی مانگانە:</span>
-                    <span className="text-xl font-black text-blue-600">
+                    <span className="text-sm font-bold text-blue-900 dark:text-blue-300">قیستی مانگانە:</span>
+                    <span className="text-xl font-black text-blue-600 dark:text-blue-400">
                       {formData.totalAmount > formData.downPayment 
                         ? Math.round((formData.totalAmount - formData.downPayment) / formData.monthsCount).toLocaleString() 
-                        : 0} دینار
+                        : 0} {formData.currency === 'USD' ? '$' : 'د.ع'}
                     </span>
                   </div>
                 </div>
@@ -403,7 +427,7 @@ export default function LoanManagement() {
                 <button
                   disabled={loading}
                   type="submit"
-                  className="w-full flex items-center justify-center gap-3 py-5 bg-blue-600 text-white rounded-2xl font-bold hover:bg-blue-700 transition-all shadow-lg shadow-blue-100 disabled:opacity-50"
+                  className="w-full flex items-center justify-center gap-3 py-5 bg-blue-600 text-white rounded-2xl font-bold hover:bg-blue-700 transition-all shadow-lg dark:shadow-none disabled:opacity-50"
                 >
                   {loading ? <Loader2 className="animate-spin" size={20} /> : <ReceiptText size={20} />}
                   {editingLoan ? 'پاشەکەوتکردنی گۆڕانکارییەکان' : 'تۆمارکردنی قەرز و خشتەی قیستەکان'}
@@ -429,26 +453,26 @@ export default function LoanManagement() {
               initial={{ opacity: 0, scale: 0.9, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.9, y: 20 }}
-              className="relative w-full max-w-md bg-white rounded-[2rem] shadow-2xl p-8 text-center"
+              className="relative w-full max-w-md bg-white dark:bg-gray-900 rounded-[2rem] shadow-2xl p-8 text-center"
             >
-              <div className="w-20 h-20 bg-red-50 text-red-600 rounded-full flex items-center justify-center mx-auto mb-6">
+              <div className="w-20 h-20 bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 rounded-full flex items-center justify-center mx-auto mb-6">
                 <Trash2 size={40} />
               </div>
-              <h2 className="text-2xl font-bold text-gray-900 mb-2">دڵنیایت لە سڕینەوە؟</h2>
-              <p className="text-gray-500 font-medium mb-8">
+              <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">دڵنیایت لە سڕینەوە؟</h2>
+              <p className="text-gray-500 dark:text-gray-400 font-medium mb-8">
                 سڕینەوەی ئەم قەرزە دەبێتە هۆی سڕینەوەی هەموو ئەو قیستانەی کە پەیوەندییان پێوەیەتی. ئەم کردارە ناگەڕێتەوە.
               </p>
               <div className="flex gap-4">
                 <button
                   onClick={() => setIsDeleteModalOpen(false)}
-                  className="flex-1 py-4 bg-gray-100 text-gray-600 rounded-2xl font-bold hover:bg-gray-200 transition-all"
+                  className="flex-1 py-4 bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 rounded-2xl font-bold hover:bg-gray-200 dark:hover:bg-gray-700 transition-all"
                 >
                   پاشگەزبوونەوە
                 </button>
                 <button
                   disabled={loading}
                   onClick={handleDelete}
-                  className="flex-1 py-4 bg-red-600 text-white rounded-2xl font-bold hover:bg-red-700 transition-all shadow-lg shadow-red-100 disabled:opacity-50 flex items-center justify-center gap-2"
+                  className="flex-1 py-4 bg-red-600 text-white rounded-2xl font-bold hover:bg-red-700 transition-all shadow-lg dark:shadow-none disabled:opacity-50 flex items-center justify-center gap-2"
                 >
                   {loading ? <Loader2 className="animate-spin" size={20} /> : <Trash2 size={20} />}
                   بەڵێ، بسڕەوە

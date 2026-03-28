@@ -39,18 +39,18 @@ class ErrorBoundary extends React.Component<any, any> {
       }
 
       return (
-        <div className="min-h-screen flex items-center justify-center bg-gray-50 p-4">
-          <div className="max-w-md w-full bg-white rounded-2xl shadow-xl p-8 text-center border border-red-100">
-            <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-red-100 text-red-600 mb-6">
+        <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-950 p-4 transition-colors">
+          <div className="max-w-md w-full bg-white dark:bg-gray-900 rounded-2xl shadow-xl p-8 text-center border border-red-100 dark:border-red-900/30">
+            <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-red-100 dark:bg-red-900/20 text-red-600 dark:text-red-400 mb-6">
               <AlertCircle size={32} />
             </div>
-            <h1 className="text-2xl font-bold text-gray-900 mb-4">هەڵەیەک ڕوویدا</h1>
-            <p className="text-gray-600 mb-8 leading-relaxed">
+            <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">هەڵەیەک ڕوویدا</h1>
+            <p className="text-gray-600 dark:text-gray-400 mb-8 leading-relaxed">
               {errorMessage}
             </p>
             <button
               onClick={() => window.location.reload()}
-              className="inline-flex items-center gap-2 px-6 py-3 bg-blue-600 text-white rounded-xl font-medium hover:bg-blue-700 transition-colors shadow-lg shadow-blue-200"
+              className="inline-flex items-center gap-2 px-6 py-3 bg-blue-600 text-white rounded-xl font-medium hover:bg-blue-700 transition-colors shadow-lg shadow-blue-200 dark:shadow-blue-900/20"
             >
               <RefreshCcw size={18} />
               دووبارە بارکردنەوە

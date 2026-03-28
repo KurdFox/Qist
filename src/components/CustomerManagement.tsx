@@ -99,12 +99,12 @@ export default function CustomerManagement() {
     <div className="space-y-8">
       <header className="flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div>
-          <h1 className="text-3xl font-extrabold text-gray-900 tracking-tight mb-2">بەڕێوەبردنی کڕیاران</h1>
-          <p className="text-gray-500 font-medium">لیستی هەموو کڕیارەکان و زیادکردنی کڕیاری نوێ</p>
+          <h1 className="text-3xl font-extrabold text-gray-900 dark:text-white tracking-tight mb-2 font-display">بەڕێوەبردنی کڕیاران</h1>
+          <p className="text-gray-500 dark:text-gray-400 font-medium">لیستی هەموو کڕیارەکان و زیادکردنی کڕیاری نوێ</p>
         </div>
         <button
           onClick={openAddModal}
-          className="inline-flex items-center justify-center gap-3 px-8 py-4 bg-blue-600 text-white rounded-2xl font-bold hover:bg-blue-700 transition-all shadow-lg shadow-blue-200"
+          className="inline-flex items-center justify-center gap-3 px-8 py-4 bg-blue-600 text-white rounded-2xl font-bold hover:bg-blue-700 transition-all shadow-lg dark:shadow-none"
         >
           <UserPlus size={20} />
           زیادکردنی کڕیار
@@ -118,7 +118,7 @@ export default function CustomerManagement() {
           placeholder="گەڕان بەدوای ناوی کڕیار یان ژمارەی مۆبایل..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="w-full pr-14 pl-6 py-5 bg-white border border-gray-100 rounded-3xl shadow-sm focus:ring-4 focus:ring-blue-50 focus:border-blue-200 outline-none transition-all font-medium"
+          className="w-full pr-14 pl-6 py-5 bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 rounded-3xl shadow-sm focus:ring-4 focus:ring-blue-50 dark:focus:ring-blue-900/20 focus:border-blue-200 dark:focus:border-blue-800 outline-none transition-all font-medium text-gray-900 dark:text-white"
         />
       </div>
 
@@ -131,40 +131,40 @@ export default function CustomerManagement() {
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.9 }}
               key={customer.id}
-              className="bg-white p-8 rounded-3xl border border-gray-100 shadow-sm hover:shadow-xl hover:shadow-blue-900/5 transition-all group relative"
+              className="bg-white dark:bg-gray-900 p-8 rounded-3xl border border-gray-100 dark:border-gray-800 shadow-sm hover:shadow-xl hover:shadow-blue-900/5 transition-all group relative"
             >
               <button 
                 onClick={() => openEditModal(customer)}
-                className="absolute top-6 left-6 p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition-all opacity-0 group-hover:opacity-100"
+                className="absolute top-6 left-6 p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-xl transition-all"
               >
                 <Edit2 size={18} />
               </button>
 
               <div className="flex items-center gap-4 mb-6">
-                <div className="w-14 h-14 rounded-2xl bg-blue-50 flex items-center justify-center text-2xl shadow-inner">
+                <div className="w-14 h-14 rounded-2xl bg-blue-50 dark:bg-blue-900/20 flex items-center justify-center text-2xl shadow-inner">
                   {customer.emoji || customer.name.charAt(0)}
                 </div>
                 <div>
-                  <h3 className="font-bold text-gray-900 text-lg">{customer.name}</h3>
-                  <p className="text-xs text-gray-400 font-bold uppercase tracking-widest">کڕیار</p>
+                  <h3 className="font-bold text-gray-900 dark:text-white text-lg">{customer.name}</h3>
+                  <p className="text-xs text-gray-400 dark:text-gray-500 font-bold uppercase tracking-widest">کڕیار</p>
                 </div>
               </div>
               
               <div className="space-y-4">
-                <div className="flex items-center gap-3 text-gray-600">
-                  <div className="w-8 h-8 rounded-lg bg-gray-50 flex items-center justify-center text-gray-400">
+                <div className="flex items-center gap-3 text-gray-600 dark:text-gray-400">
+                  <div className="w-8 h-8 rounded-lg bg-gray-50 dark:bg-gray-800 flex items-center justify-center text-gray-400 dark:text-gray-500">
                     <Phone size={16} />
                   </div>
                   <span className="text-sm font-medium">{customer.phone}</span>
                 </div>
-                <div className="flex items-center gap-3 text-gray-600">
-                  <div className="w-8 h-8 rounded-lg bg-gray-50 flex items-center justify-center text-gray-400">
+                <div className="flex items-center gap-3 text-gray-600 dark:text-gray-400">
+                  <div className="w-8 h-8 rounded-lg bg-gray-50 dark:bg-gray-800 flex items-center justify-center text-gray-400 dark:text-gray-500">
                     <MapPin size={16} />
                   </div>
                   <span className="text-sm font-medium">{customer.address || 'ناونیشان دیارینەکراوە'}</span>
                 </div>
-                <div className="flex items-center gap-3 text-gray-600">
-                  <div className="w-8 h-8 rounded-lg bg-gray-50 flex items-center justify-center text-gray-400">
+                <div className="flex items-center gap-3 text-gray-600 dark:text-gray-400">
+                  <div className="w-8 h-8 rounded-lg bg-gray-50 dark:bg-gray-800 flex items-center justify-center text-gray-400 dark:text-gray-500">
                     <CreditCard size={16} />
                   </div>
                   <span className="text-sm font-medium">{customer.idNumber || 'ژمارەی ناسنامە نییە'}</span>
@@ -190,20 +190,20 @@ export default function CustomerManagement() {
               initial={{ opacity: 0, scale: 0.9, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.9, y: 20 }}
-              className="relative w-full max-w-lg bg-white rounded-[2rem] shadow-2xl p-8 md:p-10 max-h-[90vh] overflow-y-auto"
+              className="relative w-full max-w-lg bg-white dark:bg-gray-900 rounded-[2rem] shadow-2xl p-8 md:p-10 max-h-[90vh] overflow-y-auto"
             >
               <div className="flex items-center justify-between mb-8">
-                <h2 className="text-2xl font-bold text-gray-900">
+                <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
                   {editingCustomer ? 'دەستکاری کڕیار' : 'زیادکردنی کڕیار'}
                 </h2>
-                <button onClick={() => setIsModalOpen(false)} className="p-2 text-gray-400 hover:bg-gray-50 rounded-xl transition-colors">
+                <button onClick={() => setIsModalOpen(false)} className="p-2 text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 rounded-xl transition-colors">
                   <X size={24} />
                 </button>
               </div>
 
               <form onSubmit={handleSubmit} className="space-y-6">
                 <div className="flex flex-col items-center gap-4 mb-4">
-                  <div className="w-20 h-20 rounded-3xl bg-blue-50 flex items-center justify-center text-4xl shadow-inner border-2 border-dashed border-blue-200">
+                  <div className="w-20 h-20 rounded-3xl bg-blue-50 dark:bg-blue-900/20 flex items-center justify-center text-4xl shadow-inner border-2 border-dashed border-blue-200 dark:border-blue-800">
                     {formData.emoji}
                   </div>
                   <div className="flex flex-wrap justify-center gap-2">
@@ -214,7 +214,7 @@ export default function CustomerManagement() {
                         onClick={() => setFormData({ ...formData, emoji: e })}
                         className={cn(
                           "w-10 h-10 rounded-xl flex items-center justify-center text-xl transition-all hover:scale-110",
-                          formData.emoji === e ? "bg-blue-600 text-white shadow-lg" : "bg-gray-50 hover:bg-gray-100"
+                          formData.emoji === e ? "bg-blue-600 text-white shadow-lg" : "bg-gray-50 dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700"
                         )}
                       >
                         {e}
@@ -224,44 +224,44 @@ export default function CustomerManagement() {
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-sm font-bold text-gray-700 mr-1">ناوی تەواو</label>
+                  <label className="text-sm font-bold text-gray-700 dark:text-gray-300 mr-1">ناوی تەواو</label>
                   <input
                     required
                     type="text"
                     value={formData.name}
                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                    className="w-full px-6 py-4 bg-gray-50 border border-gray-100 rounded-2xl focus:ring-4 focus:ring-blue-50 focus:border-blue-200 outline-none transition-all font-medium"
+                    className="w-full px-6 py-4 bg-gray-50 dark:bg-gray-800 border border-gray-100 dark:border-gray-700 rounded-2xl focus:ring-4 focus:ring-blue-50 dark:focus:ring-blue-900/20 focus:border-blue-200 dark:focus:border-blue-600 outline-none transition-all font-medium text-gray-900 dark:text-white"
                     placeholder="ناوی کڕیار بنووسە..."
                   />
                 </div>
                 <div className="space-y-2">
-                  <label className="text-sm font-bold text-gray-700 mr-1">ژمارەی مۆبایل</label>
+                  <label className="text-sm font-bold text-gray-700 dark:text-gray-300 mr-1">ژمارەی مۆبایل</label>
                   <input
                     required
                     type="tel"
                     value={formData.phone}
                     onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                    className="w-full px-6 py-4 bg-gray-50 border border-gray-100 rounded-2xl focus:ring-4 focus:ring-blue-50 focus:border-blue-200 outline-none transition-all font-medium"
+                    className="w-full px-6 py-4 bg-gray-50 dark:bg-gray-800 border border-gray-100 dark:border-gray-700 rounded-2xl focus:ring-4 focus:ring-blue-50 dark:focus:ring-blue-900/20 focus:border-blue-200 dark:focus:border-blue-600 outline-none transition-all font-medium text-gray-900 dark:text-white"
                     placeholder="٠٧٥٠٠٠٠٠٠٠٠"
                   />
                 </div>
                 <div className="space-y-2">
-                  <label className="text-sm font-bold text-gray-700 mr-1">ناونیشان</label>
+                  <label className="text-sm font-bold text-gray-700 dark:text-gray-300 mr-1">ناونیشان</label>
                   <input
                     type="text"
                     value={formData.address}
                     onChange={(e) => setFormData({ ...formData, address: e.target.value })}
-                    className="w-full px-6 py-4 bg-gray-50 border border-gray-100 rounded-2xl focus:ring-4 focus:ring-blue-50 focus:border-blue-200 outline-none transition-all font-medium"
+                    className="w-full px-6 py-4 bg-gray-50 dark:bg-gray-800 border border-gray-100 dark:border-gray-700 rounded-2xl focus:ring-4 focus:ring-blue-50 dark:focus:ring-blue-900/20 focus:border-blue-200 dark:focus:border-blue-600 outline-none transition-all font-medium text-gray-900 dark:text-white"
                     placeholder="ناونیشانی کڕیار..."
                   />
                 </div>
                 <div className="space-y-2">
-                  <label className="text-sm font-bold text-gray-700 mr-1">ژمارەی ناسنامە</label>
+                  <label className="text-sm font-bold text-gray-700 dark:text-gray-300 mr-1">ژمارەی ناسنامە</label>
                   <input
                     type="text"
                     value={formData.idNumber}
                     onChange={(e) => setFormData({ ...formData, idNumber: e.target.value })}
-                    className="w-full px-6 py-4 bg-gray-50 border border-gray-100 rounded-2xl focus:ring-4 focus:ring-blue-50 focus:border-blue-200 outline-none transition-all font-medium"
+                    className="w-full px-6 py-4 bg-gray-50 dark:bg-gray-800 border border-gray-100 dark:border-gray-700 rounded-2xl focus:ring-4 focus:ring-blue-50 dark:focus:ring-blue-900/20 focus:border-blue-200 dark:focus:border-blue-600 outline-none transition-all font-medium text-gray-900 dark:text-white"
                     placeholder="ژمارەی ناسنامەی کڕیار..."
                   />
                 </div>
@@ -271,7 +271,7 @@ export default function CustomerManagement() {
                     <button
                       type="button"
                       onClick={() => setIsDeleteConfirmOpen(true)}
-                      className="flex-1 flex items-center justify-center gap-3 py-5 bg-red-50 text-red-600 rounded-2xl font-bold hover:bg-red-100 transition-all border border-red-100"
+                      className="flex-1 flex items-center justify-center gap-3 py-5 bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 rounded-2xl font-bold hover:bg-red-100 dark:hover:bg-red-900/30 transition-all border border-red-100 dark:border-red-900/30"
                     >
                       <Trash2 size={20} />
                       سڕینەوە
@@ -281,7 +281,7 @@ export default function CustomerManagement() {
                     disabled={loading}
                     type="submit"
                     className={cn(
-                      "flex-[2] flex items-center justify-center gap-3 py-5 bg-blue-600 text-white rounded-2xl font-bold hover:bg-blue-700 transition-all shadow-lg shadow-blue-100 disabled:opacity-50",
+                      "flex-[2] flex items-center justify-center gap-3 py-5 bg-blue-600 text-white rounded-2xl font-bold hover:bg-blue-700 transition-all shadow-lg dark:shadow-none disabled:opacity-50",
                       !editingCustomer && "flex-1"
                     )}
                   >
@@ -310,26 +310,26 @@ export default function CustomerManagement() {
               initial={{ opacity: 0, scale: 0.9, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.9, y: 20 }}
-              className="relative w-full max-w-sm bg-white rounded-[2rem] shadow-2xl p-8 text-center"
+              className="relative w-full max-w-sm bg-white dark:bg-gray-900 rounded-[2rem] shadow-2xl p-8 text-center"
             >
-              <div className="w-20 h-20 rounded-3xl bg-red-50 text-red-600 flex items-center justify-center mx-auto mb-6 shadow-inner">
+              <div className="w-20 h-20 rounded-3xl bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 flex items-center justify-center mx-auto mb-6 shadow-inner">
                 <AlertTriangle size={40} />
               </div>
-              <h3 className="text-xl font-black text-gray-900 mb-2">ئایا دڵنیایت؟</h3>
-              <p className="text-gray-500 font-medium mb-8">
+              <h3 className="text-xl font-black text-gray-900 dark:text-white mb-2">ئایا دڵنیایت؟</h3>
+              <p className="text-gray-500 dark:text-gray-400 font-medium mb-8">
                 سڕینەوەی کڕیارەکە دەبێتە هۆی سڕینەوەی هەموو زانیارییەکانی، ئەم کارە ناگەڕێتەوە.
               </p>
               <div className="flex gap-3">
                 <button
                   onClick={() => setIsDeleteConfirmOpen(false)}
-                  className="flex-1 py-4 bg-gray-100 text-gray-600 rounded-2xl font-bold hover:bg-gray-200 transition-all"
+                  className="flex-1 py-4 bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 rounded-2xl font-bold hover:bg-gray-200 dark:hover:bg-gray-700 transition-all"
                 >
                   نەخێر
                 </button>
                 <button
                   onClick={handleDelete}
                   disabled={loading}
-                  className="flex-1 py-4 bg-red-600 text-white rounded-2xl font-bold hover:bg-red-700 transition-all shadow-lg shadow-red-100 disabled:opacity-50 flex items-center justify-center gap-2"
+                  className="flex-1 py-4 bg-red-600 text-white rounded-2xl font-bold hover:bg-red-700 transition-all shadow-lg dark:shadow-none disabled:opacity-50 flex items-center justify-center gap-2"
                 >
                   {loading && <Loader2 className="animate-spin" size={18} />}
                   بەڵێ، بسڕەوە

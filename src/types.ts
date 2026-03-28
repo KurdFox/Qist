@@ -19,6 +19,7 @@ export interface Loan {
   monthsCount: number;
   monthlyInstallment: number;
   startDate: string;
+  currency: 'IQD' | 'USD';
   status: 'active' | 'completed';
   createdAt: string;
   createdBy: string;
@@ -29,6 +30,7 @@ export interface Installment {
   loanId: string;
   customerId: string;
   amount: number;
+  currency: 'IQD' | 'USD';
   dueDate: string;
   status: 'pending' | 'paid';
   paidAt?: string;

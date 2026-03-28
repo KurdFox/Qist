@@ -76,24 +76,24 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 p-4">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-950 dark:to-gray-900 p-4 transition-colors duration-500">
       <motion.div 
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="max-w-md w-full bg-white rounded-[2.5rem] shadow-2xl p-8 md:p-10 text-center border border-white/50 backdrop-blur-sm"
+        className="max-w-md w-full bg-white dark:bg-gray-900 rounded-[2.5rem] shadow-2xl p-8 md:p-10 text-center border border-gray-100 dark:border-gray-800 backdrop-blur-sm"
       >
-        <div className="inline-flex items-center justify-center w-20 h-20 rounded-3xl bg-blue-600 text-white mb-6 shadow-xl shadow-blue-200">
+        <div className="inline-flex items-center justify-center w-20 h-20 rounded-3xl bg-blue-600 text-white mb-6 shadow-xl dark:shadow-none">
           <ShieldCheck size={40} />
         </div>
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">بەخێربێیت</h1>
-        <p className="text-gray-500 mb-8 font-medium">سیستەمی بەڕێوەبردنی قیستی کوردی</p>
+        <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">بەخێربێیت</h1>
+        <p className="text-gray-500 dark:text-gray-400 mb-8 font-medium">سیستەمی بەڕێوەبردنی قیستی کوردی</p>
 
-        <div className="flex bg-gray-50 p-1.5 rounded-2xl mb-8 border border-gray-100">
+        <div className="flex bg-gray-50 dark:bg-gray-800 p-1.5 rounded-2xl mb-8 border border-gray-100 dark:border-gray-700">
           <button
             onClick={() => { setIsSignup(false); setError(null); }}
             className={cn(
               "flex-1 py-3 rounded-xl text-sm font-bold transition-all",
-              !isSignup ? "bg-white text-blue-600 shadow-sm" : "text-gray-400 hover:text-gray-600"
+              !isSignup ? "bg-white dark:bg-gray-700 text-blue-600 dark:text-blue-400 shadow-sm" : "text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300"
             )}
           >
             چوونەژوورەوە
@@ -102,7 +102,7 @@ export default function Login() {
             onClick={() => { setIsSignup(true); setError(null); }}
             className={cn(
               "flex-1 py-3 rounded-xl text-sm font-bold transition-all",
-              isSignup ? "bg-white text-blue-600 shadow-sm" : "text-gray-400 hover:text-gray-600"
+              isSignup ? "bg-white dark:bg-gray-700 text-blue-600 dark:text-blue-400 shadow-sm" : "text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300"
             )}
           >
             دروستکردنی هەژمار
@@ -116,7 +116,7 @@ export default function Login() {
                 initial={{ opacity: 0, height: 0 }}
                 animate={{ opacity: 1, height: 'auto' }}
                 exit={{ opacity: 0, height: 0 }}
-                className="bg-red-50 text-red-600 p-4 rounded-2xl flex items-center gap-3 text-xs font-bold border border-red-100"
+                className="bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 p-4 rounded-2xl flex items-center gap-3 text-xs font-bold border border-red-100 dark:border-red-900/30"
               >
                 <AlertCircle size={16} />
                 {error}
@@ -134,7 +134,7 @@ export default function Login() {
                 const val = e.target.value.replace(/\D/g, '');
                 if (val.length <= 11) setPhone(val);
               }}
-              className="w-full pr-14 pl-12 py-4 bg-gray-50 border border-gray-100 rounded-2xl focus:ring-4 focus:ring-blue-50 focus:border-blue-200 outline-none transition-all font-bold text-gray-700 placeholder:text-right"
+              className="w-full pr-14 pl-12 py-4 bg-gray-50 dark:bg-gray-800 border border-gray-100 dark:border-gray-700 rounded-2xl focus:ring-4 focus:ring-blue-50 dark:focus:ring-blue-900/20 focus:border-blue-200 dark:focus:border-blue-800 outline-none transition-all font-bold text-gray-700 dark:text-gray-200 placeholder:text-right"
             />
             <button
               type="button"
@@ -165,7 +165,7 @@ export default function Login() {
               placeholder="پاسۆرد"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full pr-14 pl-12 py-4 bg-gray-50 border border-gray-100 rounded-2xl focus:ring-4 focus:ring-blue-50 focus:border-blue-200 outline-none transition-all font-bold text-gray-700"
+              className="w-full pr-14 pl-12 py-4 bg-gray-50 dark:bg-gray-800 border border-gray-100 dark:border-gray-700 rounded-2xl focus:ring-4 focus:ring-blue-50 dark:focus:ring-blue-900/20 focus:border-blue-200 dark:focus:border-blue-800 outline-none transition-all font-bold text-gray-700 dark:text-gray-200"
             />
             <button
               type="button"
@@ -188,7 +188,7 @@ export default function Login() {
                 placeholder="تەئکیدکردنەوەی پاسۆرد"
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
-                className="w-full pr-14 pl-12 py-4 bg-gray-50 border border-gray-100 rounded-2xl focus:ring-4 focus:ring-blue-50 focus:border-blue-200 outline-none transition-all font-bold text-gray-700"
+                className="w-full pr-14 pl-12 py-4 bg-gray-50 dark:bg-gray-800 border border-gray-100 dark:border-gray-700 rounded-2xl focus:ring-4 focus:ring-blue-50 dark:focus:ring-blue-900/20 focus:border-blue-200 dark:focus:border-blue-800 outline-none transition-all font-bold text-gray-700 dark:text-gray-200"
               />
               <button
                 type="button"
@@ -203,7 +203,7 @@ export default function Login() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full flex items-center justify-center gap-3 py-4 bg-blue-600 text-white rounded-2xl font-bold hover:bg-blue-700 transition-all shadow-lg shadow-blue-100 disabled:opacity-50"
+            className="w-full flex items-center justify-center gap-3 py-4 bg-blue-600 text-white rounded-2xl font-bold hover:bg-blue-700 transition-all shadow-lg dark:shadow-none disabled:opacity-50"
           >
             {loading ? (
               <Loader2 className="animate-spin" size={20} />
@@ -218,22 +218,22 @@ export default function Login() {
 
         <div className="relative my-10">
           <div className="absolute inset-0 flex items-center">
-            <div className="w-full border-t border-gray-100"></div>
+            <div className="w-full border-t border-gray-100 dark:border-gray-800"></div>
           </div>
           <div className="relative flex justify-center text-xs uppercase">
-            <span className="bg-white px-4 text-gray-400 font-bold">یان</span>
+            <span className="bg-white dark:bg-gray-900 px-4 text-gray-400 dark:text-gray-500 font-bold">یان</span>
           </div>
         </div>
 
         <button
           onClick={signIn}
-          className="w-full flex items-center justify-center gap-3 px-6 py-4 bg-white border-2 border-gray-100 rounded-2xl font-bold text-gray-700 hover:bg-gray-50 hover:border-blue-200 transition-all group shadow-sm"
+          className="w-full flex items-center justify-center gap-3 px-6 py-4 bg-white dark:bg-gray-900 border-2 border-gray-100 dark:border-gray-800 rounded-2xl font-bold text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 hover:border-blue-200 dark:hover:border-blue-800 transition-all group shadow-sm"
         >
           <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google" className="w-6 h-6" />
           چوونەژوورەوە بە گووگڵ
         </button>
         
-        <div className="mt-10 pt-8 border-t border-gray-50 text-[10px] text-gray-400 font-bold uppercase tracking-widest">
+        <div className="mt-10 pt-8 border-t border-gray-50 dark:border-gray-800 text-[10px] text-gray-400 dark:text-gray-500 font-bold uppercase tracking-widest">
           هەموو مافەکان پارێزراوە &copy; ٢٠٢٦ بۆ <a href="https://hosheytech.netlify.app/" target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:underline">Hoshey Tech</a>
         </div>
       </motion.div>

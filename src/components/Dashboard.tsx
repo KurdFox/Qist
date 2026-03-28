@@ -21,9 +21,12 @@ interface Activity {
 
 export default function Dashboard() {
   const [stats, setStats] = useState({
-    totalLoans: 0,
-    receivedAmount: 0,
-    remainingAmount: 0,
+    totalLoansIQD: 0,
+    totalLoansUSD: 0,
+    receivedAmountIQD: 0,
+    receivedAmountUSD: 0,
+    remainingAmountIQD: 0,
+    remainingAmountUSD: 0,
     overdueCount: 0,
     customerCount: 0
   });
@@ -49,13 +52,16 @@ export default function Dashboard() {
 
     const unsubLoans = onSnapshot(loansQuery, (snapshot) => {
       const loans = snapshot.docs.map(doc => doc.data() as Loan);
-      const total = loans.reduce((acc, loan) => acc + (loan.totalAmount || 0), 0);
-      const remaining = loans.reduce((acc, loan) => acc + (loan.remainingAmount || 0), 0);
+      
+      const totalIQD = loans.filter(l => l.currency === 'IQD' || !l.currency).reduce((acc, loan) => acc + (loan.totalAmount || 0), 0);
+      const totalUSD = loans.filter(l => l.currency === 'USD').reduce((acc, loan) => acc + (loan.totalAmount || 0), 0);
+      
       setStats(prev => ({ 
         ...prev, 
-        totalLoans: total,
-        remainingAmount: remaining,
-        receivedAmount: total - remaining
+        totalLoansIQD: totalIQD,
+        totalLoansUSD: totalUSD,
+        receivedAmountIQD: totalIQD - prev.remainingAmountIQD,
+        receivedAmountUSD: totalUSD - prev.remainingAmountUSD
       }));
     }, (err) => handleFirestoreError(err, OperationType.LIST, 'loans'));
 
@@ -63,7 +69,18 @@ export default function Dashboard() {
       const installments = snapshot.docs.map(doc => doc.data() as Installment);
       const today = new Date().toISOString().split('T')[0];
       const overdue = installments.filter(inst => inst.status === 'pending' && inst.dueDate < today).length;
-      setStats(prev => ({ ...prev, overdueCount: overdue }));
+      
+      const remainingIQD = installments.filter(i => i.status === 'pending' && (i.currency === 'IQD' || !i.currency)).reduce((acc, i) => acc + i.amount, 0);
+      const remainingUSD = installments.filter(i => i.status === 'pending' && i.currency === 'USD').reduce((acc, i) => acc + i.amount, 0);
+
+      setStats(prev => ({ 
+        ...prev, 
+        overdueCount: overdue,
+        remainingAmountIQD: remainingIQD,
+        remainingAmountUSD: remainingUSD,
+        receivedAmountIQD: prev.totalLoansIQD - remainingIQD,
+        receivedAmountUSD: prev.totalLoansUSD - remainingUSD
+      }));
     }, (err) => handleFirestoreError(err, OperationType.LIST, 'installments'));
 
     // Activity listeners
@@ -85,6 +102,7 @@ export default function Dashboard() {
         title: 'تۆمارکردنی قەرز',
         subtitle: doc.data().itemName,
         amount: doc.data().totalAmount,
+        currency: doc.data().currency || 'IQD',
         timestamp: doc.data().createdAt
       }));
       updateActivities(items, 'loan');
@@ -97,6 +115,7 @@ export default function Dashboard() {
         title: 'وەرگرتنی قیست',
         subtitle: 'قیستی مانگانە',
         amount: doc.data().amount,
+        currency: doc.data().currency || 'IQD',
         timestamp: doc.data().paidAt
       }));
       updateActivities(items, 'installment');
@@ -125,19 +144,22 @@ export default function Dashboard() {
   const cards = [
     { 
       title: 'کۆی گشتی قەرزەکان', 
-      value: stats.totalLoans.toLocaleString() + ' دینار', 
+      iqd: stats.totalLoansIQD,
+      usd: stats.totalLoansUSD,
       icon: Wallet, 
       color: 'bg-blue-600'
     },
     { 
       title: 'پارەی وەرگیراو', 
-      value: stats.receivedAmount.toLocaleString() + ' دینار', 
+      iqd: stats.receivedAmountIQD,
+      usd: stats.receivedAmountUSD,
       icon: TrendingUp, 
       color: 'bg-green-600'
     },
     { 
       title: 'پارەی ماوە', 
-      value: stats.remainingAmount.toLocaleString() + ' دینار', 
+      iqd: stats.remainingAmountIQD,
+      usd: stats.remainingAmountUSD,
       icon: CreditCard, 
       color: 'bg-orange-600'
     },
@@ -153,16 +175,16 @@ export default function Dashboard() {
     <div className="space-y-10">
       <header className="flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div>
-          <h1 className="text-3xl font-display font-bold text-gray-900 tracking-tight mb-2">داشبۆرد</h1>
-          <p className="text-gray-500 font-medium">بەخێربێیتەوە بۆ سیستەمی بەڕێوەبردنی قیستەکانت</p>
+          <h1 className="text-3xl font-display font-bold text-gray-900 dark:text-white tracking-tight mb-2">داشبۆرد</h1>
+          <p className="text-gray-500 dark:text-gray-400 font-medium">بەخێربێیتەوە بۆ سیستەمی بەڕێوەبردنی قیستەکانت</p>
         </div>
-        <div className="flex items-center gap-4 bg-white p-2 rounded-2xl shadow-sm border border-gray-100">
-          <div className="w-12 h-12 rounded-xl bg-blue-50 flex items-center justify-center text-blue-600">
+        <div className="flex items-center gap-4 bg-white dark:bg-gray-900 p-2 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800">
+          <div className="w-12 h-12 rounded-xl bg-blue-50 dark:bg-blue-900/20 flex items-center justify-center text-blue-600 dark:text-blue-400">
             <Users size={24} />
           </div>
           <div className="pr-2 pl-6">
-            <p className="text-xs text-gray-400 font-bold uppercase tracking-wider mb-0.5">کۆی کڕیاران</p>
-            <p className="text-xl font-display font-bold text-gray-900">{stats.customerCount}</p>
+            <p className="text-xs text-gray-400 dark:text-gray-500 font-bold uppercase tracking-wider mb-0.5">کۆی کڕیاران</p>
+            <p className="text-xl font-display font-bold text-gray-900 dark:text-white">{stats.customerCount}</p>
           </div>
         </div>
       </header>
@@ -174,7 +196,7 @@ export default function Dashboard() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: idx * 0.1 }}
-            className="bg-white p-8 rounded-3xl shadow-sm border border-gray-100 hover:shadow-xl hover:shadow-blue-900/5 transition-all group relative overflow-hidden"
+            className="bg-white dark:bg-gray-900 p-8 rounded-3xl border border-gray-100 dark:border-gray-800 hover:shadow-xl hover:shadow-blue-900/5 transition-all group relative overflow-hidden shadow-sm dark:shadow-none"
           >
             <div className={cn("absolute top-0 left-0 w-2 h-full", card.color)} />
             <div className="flex items-start justify-between mb-6">
@@ -182,48 +204,74 @@ export default function Dashboard() {
                 <card.icon size={28} />
               </div>
             </div>
-            <h3 className="text-gray-400 font-bold text-sm uppercase tracking-wider mb-2">{card.title}</h3>
-            <p className="text-2xl font-display font-bold text-gray-900 truncate">{card.value}</p>
+            <h3 className="text-gray-400 dark:text-gray-500 font-bold text-sm uppercase tracking-wider mb-2">{card.title}</h3>
+            {card.value ? (
+              <p className="text-2xl font-display font-bold text-gray-900 dark:text-white truncate">{card.value}</p>
+            ) : (
+              <div className="space-y-1">
+                <div className="flex items-baseline justify-between">
+                  <span className="text-2xl font-display font-bold text-gray-900 dark:text-white">
+                    {card.iqd?.toLocaleString()}
+                  </span>
+                  <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mr-2">دینار</span>
+                </div>
+                {card.usd !== undefined && card.usd > 0 && (
+                  <div className="flex items-baseline justify-between border-t border-gray-50 dark:border-gray-800 pt-1">
+                    <span className="text-lg font-display font-bold text-blue-600 dark:text-blue-400">
+                      {card.usd.toLocaleString()}
+                    </span>
+                    <span className="text-[10px] font-bold text-blue-400/60 uppercase tracking-widest mr-2">$</span>
+                  </div>
+                )}
+              </div>
+            )}
           </motion.div>
         ))}
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        <div className="lg:col-span-3 bg-white rounded-3xl p-8 border border-gray-100 shadow-sm">
+        <div className="lg:col-span-3 bg-white dark:bg-gray-900 rounded-3xl p-8 border border-gray-100 dark:border-gray-800 shadow-sm dark:shadow-none">
           <div className="flex items-center justify-between mb-8">
-            <h2 className="text-xl font-bold text-gray-900">چالاکییەکانی ئەم دواییە</h2>
-            <Link to="/activities" className="text-sm font-bold text-blue-600 hover:text-blue-700 transition-colors">بینینی هەمووی</Link>
+            <h2 className="text-xl font-bold text-gray-900 dark:text-white">چالاکییەکانی ئەم دواییە</h2>
+            <Link to="/activities" className="text-sm font-bold text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors">بینینی هەمووی</Link>
           </div>
           <div className="space-y-6">
             {activities.length === 0 ? (
               <div className="text-center py-10">
-                <p className="text-gray-400 font-bold">هیچ چالاکییەک نییە</p>
+                <p className="text-gray-400 dark:text-gray-500 font-bold">هیچ چالاکییەک نییە</p>
               </div>
             ) : (
               activities.map((activity, i) => (
-                <div key={activity.id} className="flex items-center gap-4 p-4 rounded-2xl hover:bg-gray-50 transition-colors border border-transparent hover:border-gray-100">
+                <div key={activity.id} className="flex items-center gap-4 p-4 rounded-2xl hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors border border-transparent hover:border-gray-100 dark:hover:border-gray-700">
                   <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${
-                    activity.type === 'customer' ? 'bg-purple-50 text-purple-600' :
-                    activity.type === 'loan' ? 'bg-blue-50 text-blue-600' :
-                    'bg-green-50 text-green-600'
+                    activity.type === 'customer' ? 'bg-purple-50 dark:bg-purple-900/20 text-purple-600 dark:text-purple-400' :
+                    activity.type === 'loan' ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400' :
+                    'bg-green-50 dark:bg-green-900/20 text-green-600 dark:text-green-400'
                   }`}>
                     {activity.type === 'customer' ? <UserPlus size={20} /> :
                      activity.type === 'loan' ? <ReceiptText size={20} /> :
                      <TrendingUp size={20} />}
                   </div>
                   <div className="flex-1">
-                    <p className="text-sm font-bold text-gray-900">{activity.title}</p>
-                    <p className="text-xs text-gray-400">
+                    <p className="text-sm font-bold text-gray-900 dark:text-white">{activity.title}</p>
+                    <p className="text-xs text-gray-400 dark:text-gray-500">
                       {formatDistanceToNow(new Date(activity.timestamp), { addSuffix: true, locale: ckb })}
                     </p>
                   </div>
                   <div className="text-left">
                     {activity.amount && (
-                      <p className={`text-sm font-display font-bold ${activity.type === 'installment' ? 'text-green-600' : 'text-blue-600'}`}>
-                        {activity.type === 'installment' ? '+' : ''}{activity.amount.toLocaleString()} دینار
+                      <p className={cn(
+                        "text-sm font-display font-bold",
+                        activity.type === 'installment' ? 'text-green-600' : 'text-blue-600'
+                      )}>
+                        {activity.type === 'installment' ? '+' : ''}
+                        {activity.amount.toLocaleString()}
+                        <span className="text-[10px] mr-1 opacity-60">
+                          {(activity as any).currency === 'USD' ? '$' : 'دینار'}
+                        </span>
                       </p>
                     )}
-                    <p className="text-[10px] text-gray-400 font-bold">{activity.subtitle}</p>
+                    <p className="text-[10px] text-gray-400 dark:text-gray-500 font-bold">{activity.subtitle}</p>
                   </div>
                 </div>
               ))
