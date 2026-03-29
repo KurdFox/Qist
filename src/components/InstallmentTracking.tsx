@@ -1,11 +1,13 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { collection, onSnapshot, query, where, updateDoc, doc, increment, getDoc } from 'firebase/firestore';
 import { db, auth } from '../firebase';
 import { Customer, Installment, OperationType, Loan } from '../types';
 import { handleFirestoreError } from '../lib/firestoreUtils';
-import { CreditCard, CheckCircle2, Clock, Search, Filter, Loader2, User, RotateCcw, AlertCircle, ChevronDown, ChevronUp } from 'lucide-react';
+import { CreditCard, CheckCircle2, Clock, Search, Filter, Loader2, User, RotateCcw, AlertCircle, ChevronDown, ChevronUp, Download } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { cn } from '../lib/utils';
+import jsPDF from 'jspdf';
+import html2canvas from 'html2canvas';
 
 export default function InstallmentTracking() {
   const [installments, setInstallments] = useState<Installment[]>([]);
@@ -16,6 +18,46 @@ export default function InstallmentTracking() {
   const [loadingId, setLoadingId] = useState<string | null>(null);
   const [revertingId, setRevertingId] = useState<string | null>(null);
   const [expandedCustomerId, setExpandedCustomerId] = useState<string | null>(null);
+  const [showReceipt, setShowReceipt] = useState<any | null>(null);
+  const [isDownloading, setIsDownloading] = useState(false);
+  const receiptRef = useRef<HTMLDivElement>(null);
+
+  const handleDownloadPDF = async () => {
+    if (!receiptRef.current || !showReceipt) return;
+    
+    setIsDownloading(true);
+    try {
+      const element = receiptRef.current;
+      
+      // Create a clone for PDF generation to avoid UI glitches
+      const canvas = await html2canvas(element, {
+        scale: 2,
+        useCORS: true,
+        logging: false,
+        backgroundColor: '#ffffff',
+        // Filter out the buttons from the screenshot
+        ignoreElements: (el) => el.classList.contains('no-print')
+      });
+      
+      const imgData = canvas.toDataURL('image/png');
+      const pdf = new jsPDF({
+        orientation: 'portrait',
+        unit: 'mm',
+        format: 'a4'
+      });
+      
+      const imgWidth = 210; // A4 width in mm
+      const imgHeight = (canvas.height * imgWidth) / canvas.width;
+      
+      pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight);
+      pdf.save(`Receipt-${showReceipt.customerName}-${showReceipt.lastPaidDate}.pdf`);
+    } catch (error) {
+      console.error("PDF generation failed:", error);
+      alert("ببورە، کێشەیەک لە دروستکردنی PDFەکەدا هەیە.");
+    } finally {
+      setIsDownloading(false);
+    }
+  };
 
   useEffect(() => {
     if (!auth.currentUser) return;
@@ -276,7 +318,29 @@ export default function InstallmentTracking() {
                           </p>
                         )}
                         {group.pendingIQD === 0 && group.pendingUSD === 0 && (
-                          <p className="text-lg sm:text-xl font-black text-gray-300 dark:text-gray-700">0</p>
+                          <div className="flex flex-col items-end gap-2">
+                            <p className="text-lg sm:text-xl font-black text-green-600 dark:text-green-400 flex items-center gap-2">
+                              0 <CheckCircle2 size={16} />
+                            </p>
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                const lastPaid = group.installments
+                                  .filter(i => i.status === 'paid' && i.paidAt)
+                                  .sort((a, b) => new Date(b.paidAt!).getTime() - new Date(a.paidAt!).getTime())[0];
+                                
+                                setShowReceipt({
+                                  customerName: group.customer.name,
+                                  totalPaidIQD: group.paidIQD,
+                                  totalPaidUSD: group.paidUSD,
+                                  lastPaidDate: lastPaid?.paidAt?.split('T')[0] || today
+                                });
+                              }}
+                              className="px-4 py-1.5 bg-green-600 hover:bg-green-700 text-white text-[10px] font-black uppercase tracking-widest rounded-full transition-all flex items-center gap-2 shadow-lg shadow-green-600/20"
+                            >
+                              وەسڵ <RotateCcw size={12} />
+                            </button>
+                          </div>
                         )}
                       </div>
                     </div>
@@ -406,6 +470,96 @@ export default function InstallmentTracking() {
           </div>
         )}
       </div>
+
+      {/* Receipt Modal */}
+      <AnimatePresence>
+        {showReceipt && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
+            onClick={() => setShowReceipt(null)}
+          >
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0, y: 20 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              exit={{ scale: 0.9, opacity: 0, y: 20 }}
+              className="bg-white dark:bg-gray-900 w-full max-w-lg rounded-[2.5rem] overflow-hidden shadow-2xl border border-gray-100 dark:border-gray-800"
+              onClick={e => e.stopPropagation()}
+            >
+              <div 
+                id="receipt-print" 
+                ref={receiptRef} 
+                className="p-8 sm:p-12 text-center relative"
+                style={{ backgroundColor: '#ffffff', color: '#111827' }}
+              >
+                {/* Decorative Elements */}
+                <div 
+                  className="absolute top-0 left-0 w-full h-2 no-print" 
+                  style={{ background: 'linear-gradient(to right, #4ade80, #3b82f6, #a855f7)' }}
+                />
+                
+                <div 
+                  className="w-20 h-20 rounded-3xl flex items-center justify-center mx-auto mb-8 border shadow-inner"
+                  style={{ backgroundColor: '#f0fdf4', borderColor: '#dcfce7' }}
+                >
+                  <CheckCircle2 size={40} style={{ color: '#16a34a' }} />
+                </div>
+
+                <h2 className="text-3xl font-black mb-2" style={{ color: '#111827' }}>وەسڵی کۆتایی</h2>
+                <p className="text-sm font-bold uppercase tracking-widest mb-10" style={{ color: '#9ca3af' }}>Final Settlement Receipt</p>
+
+                <div 
+                  className="rounded-[2rem] p-8 mb-10 text-right space-y-6 border shadow-inner"
+                  style={{ backgroundColor: '#f9fafb', borderColor: '#f3f4f6' }}
+                >
+                  <p className="text-lg sm:text-xl leading-relaxed font-medium" style={{ color: '#374151' }}>
+                    بەڕێز <span className="font-black underline underline-offset-8" style={{ color: '#111827', textDecorationColor: 'rgba(59, 130, 246, 0.3)' }}>{showReceipt.customerName}</span>،
+                  </p>
+                  <p className="text-lg sm:text-xl leading-relaxed font-medium" style={{ color: '#374151' }}>
+                    بڕی <span className="font-black" style={{ color: '#16a34a' }}>
+                      {showReceipt.totalPaidIQD > 0 && `${showReceipt.totalPaidIQD.toLocaleString()} د.ع`}
+                      {showReceipt.totalPaidIQD > 0 && showReceipt.totalPaidUSD > 0 && " و "}
+                      {showReceipt.totalPaidUSD > 0 && `${showReceipt.totalPaidUSD.toLocaleString()} $`}
+                    </span> وەرگیرا لە <span className="font-black" style={{ color: '#111827' }}>{showReceipt.lastPaidDate}</span>.
+                  </p>
+                </div>
+
+                <div className="grid grid-cols-2 gap-8 mb-10">
+                  <div className="space-y-4">
+                    <div className="h-px w-full" style={{ backgroundColor: '#e5e7eb' }} />
+                    <p className="text-xs font-black" style={{ color: '#9ca3af' }}>ئیمزای خاوەن قیست</p>
+                  </div>
+                  <div className="space-y-4">
+                    <div className="h-px w-full" style={{ backgroundColor: '#e5e7eb' }} />
+                    <p className="text-xs font-black" style={{ color: '#9ca3af' }}>ئیمزای قەرزدار</p>
+                  </div>
+                </div>
+
+                <div className="flex flex-col gap-4 no-print">
+                  <div className="flex gap-4">
+                    <button
+                      disabled={isDownloading}
+                      onClick={handleDownloadPDF}
+                      className="flex-1 py-4 bg-gray-900 text-white rounded-2xl font-black text-sm uppercase tracking-widest hover:scale-[1.02] active:scale-[0.98] transition-all shadow-xl shadow-gray-900/20 flex items-center justify-center gap-2 disabled:opacity-50"
+                    >
+                      {isDownloading ? <Loader2 className="animate-spin" size={18} /> : <Download size={18} />}
+                      داونڵۆد وەک PDF
+                    </button>
+                    <button
+                      onClick={() => setShowReceipt(null)}
+                      className="flex-1 py-4 bg-gray-100 text-gray-600 rounded-2xl font-black text-sm uppercase tracking-widest hover:bg-gray-200 transition-all"
+                    >
+                      داخستن
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
