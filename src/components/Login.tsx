@@ -129,6 +129,7 @@ export default function Login() {
             <input
               type="tel"
               placeholder="ژمارەی مۆبایل"
+              dir="rtl"
               value={phone}
               onChange={(e) => {
                 const val = e.target.value.replace(/\D/g, '');
@@ -163,6 +164,7 @@ export default function Login() {
             <input
               type={showPassword ? "text" : "password"}
               placeholder="پاسۆرد"
+              dir="rtl"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               className="w-full pr-14 pl-12 py-4 bg-gray-50 dark:bg-gray-800 border border-gray-100 dark:border-gray-700 rounded-2xl focus:ring-4 focus:ring-blue-50 dark:focus:ring-blue-900/20 focus:border-blue-200 dark:focus:border-blue-800 outline-none transition-all font-bold text-gray-700 dark:text-gray-200"
@@ -186,6 +188,7 @@ export default function Login() {
               <input
                 type={showConfirmPassword ? "text" : "password"}
                 placeholder="تەئکیدکردنەوەی پاسۆرد"
+                dir="rtl"
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 className="w-full pr-14 pl-12 py-4 bg-gray-50 dark:bg-gray-800 border border-gray-100 dark:border-gray-700 rounded-2xl focus:ring-4 focus:ring-blue-50 dark:focus:ring-blue-900/20 focus:border-blue-200 dark:focus:border-blue-800 outline-none transition-all font-bold text-gray-700 dark:text-gray-200"
